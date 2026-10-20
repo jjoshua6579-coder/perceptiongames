@@ -35,6 +35,7 @@ footer{max-width:1100px;margin:auto;padding:0 22px 30px;color:var(--muted);font-
 <article class="game-card"><div class="game-icon">⌕</div><h3>Symbol Sprint</h3><p>Find the target number among distractions before the clock runs out.</p><button onclick="openGame('search')">Play game →</button></article>
 </section>
 
+
 <section class="panel">
   <div class="section-head" style="margin-top:0">
     <div>
@@ -43,6 +44,7 @@ footer{max-width:1100px;margin:auto;padding:0 22px 30px;color:var(--muted);font-
     </div>
     <button class="small-btn" onclick="loadLeaderboard()">Refresh</button>
   </div>
+
   <label for="leaderboard-game">Choose a game</label>
   <select id="leaderboard-game" onchange="loadLeaderboard()" style="display:block;width:100%;max-width:320px;margin:10px 0;padding:11px;background:#10141f;color:white;border:1px solid #30394d;border-radius:10px;font:inherit">
     <option value="odd-color">Odd Color Out</option>
@@ -50,6 +52,14 @@ footer{max-width:1100px;margin:auto;padding:0 22px 30px;color:var(--muted);font-
     <option value="pattern">Pattern Recall</option>
     <option value="symbol">Symbol Sprint</option>
   </select>
+
+  <label for="leaderboard-difficulty">Choose difficulty</label>
+  <select id="leaderboard-difficulty" onchange="loadLeaderboard()" style="display:block;width:100%;max-width:320px;margin:10px 0;padding:11px;background:#10141f;color:white;border:1px solid #30394d;border-radius:10px;font:inherit">
+    <option value="easy">Easy</option>
+    <option value="normal" selected>Normal</option>
+    <option value="hard">Hard</option>
+  </select>
+
   <div id="leaderboard"><div class="empty">Loading scores…</div></div>
 </section>
 
@@ -68,24 +78,27 @@ let current='',score=0,round=0,timer=null,started=0,sequence=[],step=0,accepting
 const $=id=>document.getElementById(id);
 function getScores(){try{return JSON.parse(localStorage.getItem('perceptScores')||'{}')}catch{return {}}}
   
-async function loadLeaderboard(){
+
+async function loadLeaderboard() {
   const board = $('leaderboard');
   const game = $('leaderboard-game').value;
+  const difficulty = $('leaderboard-difficulty').value;
 
   board.innerHTML = '<div class="empty">Loading scores...</div>';
 
   try {
-    const response = await fetch(
-      SUPABASE_URL + '/rest/v1/scores?select=nickname,game,score,created_at&game=eq.' +
-      encodeURIComponent(game) +
-      '&order=score.desc&limit=10',
-      {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY
-        }
+    const url = SUPABASE_URL +
+      '/rest/v1/scores?select=nickname,game,difficulty,score,created_at' +
+      '&game=eq.' + encodeURIComponent(game) +
+      '&difficulty=eq.' + encodeURIComponent(difficulty) +
+      '&order=score.desc&limit=10';
+
+    const response = await fetch(url, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY
       }
-    );
+    });
 
     if (!response.ok) {
       throw new Error('Could not load scores');
@@ -94,7 +107,8 @@ async function loadLeaderboard(){
     const scores = await response.json();
 
     if (scores.length === 0) {
-      board.innerHTML = '<div class="empty">No scores yet. Be the first to play!</div>';
+      board.innerHTML =
+        '<div class="empty">No scores for this difficulty yet. Be the first!</div>';
       return;
     }
 
@@ -107,9 +121,10 @@ async function loadLeaderboard(){
     ).join('');
   } catch (error) {
     board.innerHTML =
-      '<div class="empty">Could not load scores. Check your Supabase settings.</div>';
+      '<div class="empty">Could not load scores. Please check your Supabase settings.</div>';
   }
 }
+
 
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, character => ({
@@ -153,10 +168,11 @@ async function submitOnlineScore(game, value) {
         'Prefer': 'return=minimal'
       },
       body: JSON.stringify({
-        nickname: nickname,
-        game: gameNames[game],
-        score: value
-      })
+  nickname: nickname,
+  game: gameNames[game],
+  difficulty: $('leaderboard-difficulty').value,
+  score: value
+})
     });
 
     if (!response.ok) {
