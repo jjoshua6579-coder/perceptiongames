@@ -34,11 +34,25 @@ footer{max-width:1100px;margin:auto;padding:0 22px 30px;color:var(--muted);font-
 <article class="game-card"><div class="game-icon">▦</div><h3>Pattern Recall</h3><p>Memorize a sequence of glowing tiles, then repeat it from memory.</p><button onclick="openGame('memory')">Play game →</button></article>
 <article class="game-card"><div class="game-icon">⌕</div><h3>Symbol Sprint</h3><p>Find the target number among distractions before the clock runs out.</p><button onclick="openGame('search')">Play game →</button></article>
 </section>
+
 <section class="panel">
-<div class="section-head" style="margin-top:0"><div><h2>Your leaderboard</h2><p class="sub">Scores saved on this device and browser.</p></div><button class="small-btn" onclick="resetScores()">Reset</button></div>
-<div class="note">This starter version stores scores locally. It does not yet show scores from other players. A shared public leaderboard needs a free online database and a small setup step, which we can add after you publish the site.</div>
-<div id="leaderboard"></div>
+  <div class="section-head" style="margin-top:0">
+    <div>
+      <h2>🌍 Global leaderboard</h2>
+      <p class="sub">Scores from players around the world.</p>
+    </div>
+    <button class="small-btn" onclick="loadLeaderboard()">Refresh</button>
+  </div>
+  <label for="leaderboard-game">Choose a game</label>
+  <select id="leaderboard-game" onchange="loadLeaderboard()" style="display:block;width:100%;max-width:320px;margin:10px 0;padding:11px;background:#10141f;color:white;border:1px solid #30394d;border-radius:10px;font:inherit">
+    <option value="odd-color">Odd Color Out</option>
+    <option value="reaction">Reaction Rush</option>
+    <option value="pattern">Pattern Recall</option>
+    <option value="symbol">Symbol Sprint</option>
+  </select>
+  <div id="leaderboard"><div class="empty">Loading scores…</div></div>
 </section>
+
 <section class="panel"><h2>How scoring works</h2><p class="sub">Each game has its own best score. Try to improve your personal records, then we'll connect a global leaderboard.</p><div id="personal-bests"></div></section>
 </main>
 <footer>Percept is a free mini-game prototype. Scores are for fun and are not scientific measurements of perception or reaction ability.</footer>
@@ -46,16 +60,141 @@ footer{max-width:1100px;margin:auto;padding:0 22px 30px;color:var(--muted);font-
 <div class="modal"><div class="modal-head"><h2 id="modal-title">Game</h2><button class="close" onclick="closeGame()" aria-label="Close game">✕</button></div><div class="game-info"><span id="game-status">Ready</span><span id="game-score">Score: 0</span></div><div class="play-area" id="play-area"></div></div>
 </div>
 <script>
+const SUPABASE_URL = 'https://pilqnhsrexzdurkxvwzp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_3wM8OhqxZuTAarh27Dcb5Q_8GBRQekE';
+
 const titles={color:'Odd Color Out',reaction:'Reaction Rush',memory:'Pattern Recall',search:'Symbol Sprint'};
 let current='',score=0,round=0,timer=null,started=0,sequence=[],step=0,accepting=false,gameEnd=0;
 const $=id=>document.getElementById(id);
 function getScores(){try{return JSON.parse(localStorage.getItem('perceptScores')||'{}')}catch{return {}}}
+  
+async function loadLeaderboard(){
+  const board = $('leaderboard');
+  const game = $('leaderboard-game').value;
+
+  board.innerHTML = '<div class="empty">Loading scores...</div>';
+
+  try {
+    const response = await fetch(
+      SUPABASE_URL + '/rest/v1/scores?select=nickname,game,score,created_at&game=eq.' +
+      encodeURIComponent(game) +
+      '&order=score.desc&limit=10',
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Could not load scores');
+    }
+
+    const scores = await response.json();
+
+    if (scores.length === 0) {
+      board.innerHTML = '<div class="empty">No scores yet. Be the first to play!</div>';
+      return;
+    }
+
+    board.innerHTML = scores.map((entry, index) =>
+      '<div class="leader-row">' +
+        '<div class="rank">#' + (index + 1) + '</div>' +
+        '<div>' + escapeHTML(entry.nickname) + '</div>' +
+        '<strong>' + entry.score + '</strong>' +
+      '</div>'
+    ).join('');
+  } catch (error) {
+    board.innerHTML =
+      '<div class="empty">Could not load scores. Check your Supabase settings.</div>';
+  }
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[character]);
+}
+  
+async function submitOnlineScore(game, value) {
+  const nicknameInput = $('nickname');
+  const nickname = nicknameInput.value.trim();
+
+  if (!nickname) {
+    alert('Please enter a nickname first.');
+    nicknameInput.focus();
+    return;
+  }
+
+  if (nickname.length > 20) {
+    alert('Your nickname must be 20 characters or fewer.');
+    return;
+  }
+
+  const gameNames = {
+    color: 'odd-color',
+    reaction: 'reaction',
+    memory: 'pattern',
+    search: 'symbol'
+  };
+
+  try {
+    const response = await fetch(SUPABASE_URL + '/rest/v1/scores', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        nickname: nickname,
+        game: gameNames[game],
+        score: value
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Score submission failed');
+    }
+
+    alert('Score submitted! Good luck on the leaderboard.');
+    loadLeaderboard();
+  } catch (error) {
+    alert('Could not submit your score. Please check your Supabase settings and try again.');
+  }
+}
+
+
 function saveScore(game,value){const all=getScores();all[game]=Math.max(all[game]||0,value);localStorage.setItem('perceptScores',JSON.stringify(all));renderScores()}
 function setStatus(s){$('game-status').textContent=s}
 function setScore(s){score=s;$('game-score').textContent='Score: '+score}
 function openGame(game){clearTimeout(timer);current=game;score=0;round=0;$('modal-title').textContent=titles[game];$('overlay').classList.add('open');setStatus('Ready');setScore(0);if(game==='color')startColor();if(game==='reaction')reactionIntro();if(game==='memory')memoryIntro();if(game==='search')searchIntro()}
 function closeGame(){clearTimeout(timer);$('overlay').classList.remove('open');accepting=false;renderScores()}
-function finish(message){clearTimeout(timer);accepting=false;saveScore(current,score);$('play-area').innerHTML='<div class="target">'+(score>0?'Nice run!':'Good try!')+'</div><p>'+message+'</p><p>Your score: <strong>'+score+'</strong></p><button class="primary" onclick="openGame(current)">Play again</button>';setStatus('Finished')}
+function finish(message){
+  clearTimeout(timer);
+  accepting=false;
+  saveScore(current,score);
+
+  $('play-area').innerHTML =
+    '<div class="target">' +
+      (score>0?'Nice run!':'Good try!') +
+    '</div>' +
+    '<p>'+message+'</p>' +
+    '<p>Your score: <strong>'+score+'</strong></p>' +
+    '<label for="nickname">Nickname (max 20 characters)</label>' +
+    '<input id="nickname" maxlength="20" placeholder="Enter your nickname" ' +
+      'style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:10px 0;background:#10141f;color:white;border:1px solid #30394d;border-radius:10px;font:inherit">' +
+    '<button class="primary" onclick="submitOnlineScore(current,score)">Submit score globally</button>' +
+    '<button class="primary" onclick="openGame(current)">Play again</button>';
+
+  setStatus('Finished');
+}
 function startColor(){score=0;round=0;setScore(0);setStatus('Find the odd tile');colorRound()}
 function colorRound(){if(round>=15){finish('You cleared all 15 rounds.');return}round++;setStatus('Round '+round+' of 15');let hue=Math.floor(Math.random()*360),diff=Math.max(4,19-round);let odd=Math.floor(Math.random()*16);let tiles='';for(let i=0;i<16;i++){let light=i===odd?Math.min(82,55+diff):55;tiles+=`<button class="tile" aria-label="Color tile ${i+1}" style="background:hsl(${hue} 72% ${light}%)" onclick="colorPick(${i===odd})"></button>`}$('play-area').innerHTML='<p>Tap the tile that looks different.</p><div class="grid">'+tiles+'</div><p>Round '+round+' / 15</p>'}
 function colorPick(correct){if(!correct){finish('That tile was not the odd one out.');return}score+=round*10;setScore(score);colorRound()}
@@ -73,8 +212,31 @@ function searchRound(){if(Date.now()>=gameEnd){finish('Time is up.');return}roun
 function searchTick(){if(Date.now()>=gameEnd){finish('Time is up.');return}let c=$('countdown');if(c)c.textContent='Time left: '+Math.ceil((gameEnd-Date.now())/1000)+'s';timer=setTimeout(searchTick,250)}
 function searchPick(n,target){if(n===target){score+=10;setScore(score);searchRound()}else{score=Math.max(0,score-5);setScore(score)}}
 function resetScores(){if(confirm('Clear personal bests saved in this browser?')){localStorage.removeItem('perceptScores');renderScores()}}
-function renderScores(){const scores=getScores();let entries=Object.entries(titles).map(([k,t])=>({key:k,title:t,score:scores[k]||0})).sort((a,b)=>b.score-a.score);$('leaderboard').innerHTML=entries.some(e=>e.score>0)?entries.map((e,i)=>`<div class="leader-row"><div class="rank">#${i+1}</div><div>${e.title}</div><strong>${e.score}</strong></div>`).join(''):'<div class="empty">No scores yet. Play a game to set your first personal best.</div>';$('personal-bests').innerHTML=entries.map(e=>`<div class="leader-row"><div class="rank">★</div><div>${e.title}</div><strong>${e.score?e.score:'—'}</strong></div>`).join('')}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGame()});renderScores();
+function renderScores(){
+  const scores = getScores();
+
+  const entries = Object.entries(titles).map(([key,title]) => ({
+    key,
+    title,
+    score: scores[key] || 0
+  }));
+
+  $('personal-bests').innerHTML = entries.map(entry =>
+    '<div class="leader-row">' +
+      '<div class="rank">★</div>' +
+      '<div>' + entry.title + '</div>' +
+      '<strong>' + (entry.score || '—') + '</strong>' +
+    '</div>'
+  ).join('');
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeGame();
+});
+
+renderScores();
+loadLeaderboard();
 </script>
+</script>
+
 </body>
 </html>
