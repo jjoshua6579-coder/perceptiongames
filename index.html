@@ -3,255 +3,578 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#10131c">
+<meta name="theme-color" content="#0d1017">
 <title>Percept — Quick Brain Games</title>
 <style>
-:root{color-scheme:dark;--bg:#10131c;--panel:#191e2b;--panel2:#202738;--text:#f5f7ff;--muted:#aab3c8;--accent:#9b8cff;--mint:#72f0c1;--line:#30394d}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#202744 0%,var(--bg) 52%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
-header{max-width:1100px;margin:auto;padding:26px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{font-weight:900;letter-spacing:-.04em;font-size:1.45rem}.brand span{color:var(--mint)}.tag{font-size:.78rem;border:1px solid var(--line);border-radius:99px;padding:7px 11px;color:var(--muted)}
-main{max-width:1100px;margin:auto;padding:16px 22px 60px}.hero{padding:34px 0 25px}.eyebrow{color:var(--mint);font-weight:800;text-transform:uppercase;letter-spacing:.15em;font-size:.75rem}.hero h1{font-size:clamp(2.4rem,7vw,4.8rem);line-height:.98;letter-spacing:-.065em;margin:12px 0 16px;max-width:800px}.hero p{max-width:620px;color:var(--muted);font-size:1.08rem;margin:0}.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.stat{background:#ffffff08;border:1px solid var(--line);padding:9px 13px;border-radius:12px;color:var(--muted);font-size:.9rem}.stat strong{color:var(--text)}
-.section-head{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:25px 0 14px}.section-head h2{margin:0;font-size:1.35rem;letter-spacing:-.03em}.section-head p{margin:0;color:var(--muted);font-size:.9rem}
-.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.game-card{background:linear-gradient(145deg,#1c2231,#171b27);border:1px solid var(--line);border-radius:20px;padding:20px;min-height:218px;display:flex;flex-direction:column;align-items:flex-start}.game-icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:#9b8cff20;font-size:1.5rem;margin-bottom:13px}.game-card h3{margin:0 0 6px;font-size:1.12rem}.game-card p{color:var(--muted);margin:0 0 18px;font-size:.93rem;max-width:440px}.game-card button,.primary,button{font:inherit;cursor:pointer}.game-card button,.primary{border:0;border-radius:12px;padding:11px 15px;background:var(--accent);color:#141321;font-weight:800;margin-top:auto}.game-card button:hover,.primary:hover{filter:brightness(1.08)}button:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;margin-top:18px}.panel h2{margin:0 0 5px}.sub{color:var(--muted);margin:0 0 15px;font-size:.9rem}.leader-row{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.leader-row:last-child{border:0}.rank{color:var(--mint);font-weight:900}.empty{color:var(--muted);padding:12px 0}.small-btn{background:transparent;color:var(--muted);border:1px solid var(--line);padding:8px 11px;border-radius:10px}
-footer{max-width:1100px;margin:auto;padding:0 22px 30px;color:var(--muted);font-size:.82rem}.note{background:#9b8cff12;border:1px solid #9b8cff44;padding:13px 15px;border-radius:13px;color:#dcd7ff;font-size:.88rem;margin-top:18px}
-.overlay{position:fixed;inset:0;background:#080a10d9;display:none;align-items:center;justify-content:center;padding:18px;z-index:5}.overlay.open{display:flex}.modal{width:min(680px,100%);max-height:92vh;overflow:auto;background:#171c29;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 25px 100px #0008}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.modal h2{margin:0}.close{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 11px}.play-area{margin-top:18px;background:#10141f;border:1px solid var(--line);border-radius:16px;padding:18px;min-height:270px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.play-area p{color:var(--muted)}.game-info{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.9rem;margin-top:14px}.grid{display:grid;grid-template-columns:repeat(4,minmax(48px,72px));gap:8px;justify-content:center;margin:16px auto}.tile{aspect-ratio:1;border:0;border-radius:12px;min-width:0;background:hsl(252 75% 64%);padding:0}.tile:hover{filter:brightness(1.08)}.target{font-size:2.5rem;font-weight:900;letter-spacing:-.05em}.reaction-pad{width:min(100%,400px);height:155px;border-radius:16px;border:0;background:#30394d;color:white;font-size:1.1rem;font-weight:800}.memory-grid{display:grid;grid-template-columns:repeat(3,70px);gap:8px;justify-content:center;margin:16px auto}.memory-tile{width:70px;height:70px;border-radius:12px;border:1px solid var(--line);background:#252d40}.memory-tile.lit{background:var(--mint);box-shadow:0 0 24px #72f0c155}.search-options{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:16px auto}.search-option{background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:12px 16px;border-radius:12px;min-width:65px;font-weight:800}.name-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.name-row input{flex:1;min-width:160px;background:#10141f;color:var(--text);border:1px solid var(--line);padding:11px 12px;border-radius:10px;font:inherit}
-@media(max-width:650px){header{padding:20px 16px}main{padding:8px 16px 45px}.games{grid-template-columns:1fr}.hero{padding-top:25px}.game-card{min-height:195px}.panel{padding:16px}.modal{padding:16px}.memory-grid{grid-template-columns:repeat(3,58px)}.memory-tile{width:58px;height:58px}}
+:root{
+  color-scheme:dark;
+  --bg:#0d1017;--panel:#161b27;--panel2:#1d2433;--panel3:#252d40;
+  --text:#f4f6ff;--muted:#9aa5bd;--line:#2a3347;
+  --accent:#9b8cff;--accent2:#7b6bff;--mint:#72f0c1;--warn:#ffb86b;--bad:#ff7b8a;
+  --easy:#72f0c1;--normal:#9b8cff;--hard:#ff8a9b;
+  --radius:20px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(900px 500px at 15% -10%,#27305a 0%,transparent 60%),
+    radial-gradient(700px 400px at 100% 0%,#173a43 0%,transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+/* header */
+header{display:flex;align-items:center;justify-content:space-between;padding:24px 0}
+.brand{font-weight:900;letter-spacing:-.05em;font-size:1.5rem}
+.brand span{color:var(--mint)}
+.tag{font-size:.72rem;font-weight:700;letter-spacing:.12em;border:1px solid var(--line);border-radius:99px;padding:7px 12px;color:var(--muted);background:#ffffff06}
+
+/* hero */
+.hero{padding:34px 0 10px}
+.eyebrow{color:var(--mint);font-weight:800;text-transform:uppercase;letter-spacing:.16em;font-size:.74rem}
+.hero h1{font-size:clamp(2.5rem,7vw,4.9rem);line-height:.98;letter-spacing:-.06em;margin:14px 0 16px;max-width:820px}
+.grad{background:linear-gradient(90deg,var(--mint),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:600px;color:var(--muted);font-size:1.08rem;margin:0}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.chip{background:#ffffff08;border:1px solid var(--line);padding:8px 14px;border-radius:99px;color:var(--muted);font-size:.88rem}
+.chip strong{color:var(--text)}
+
+/* section titles */
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:44px 0 16px}
+.section-head h2{margin:0;font-size:1.4rem;letter-spacing:-.03em}
+.section-head p{margin:2px 0 0;color:var(--muted);font-size:.92rem}
+
+/* game cards */
+.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.game-card{
+  position:relative;overflow:hidden;text-align:left;border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;background:linear-gradient(150deg,#1b2233,#141926);
+  display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:210px;
+  transition:transform .18s,border-color .18s,box-shadow .18s;
+}
+.game-card::after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--glow,#9b8cff33),transparent 70%);pointer-events:none}
+.game-card:hover{transform:translateY(-3px);border-color:#4a5578;box-shadow:0 18px 40px #0006}
+.game-icon{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;background:#ffffff0d;font-size:1.5rem;margin-bottom:12px;border:1px solid var(--line)}
+.game-card h3{margin:0;font-size:1.15rem;letter-spacing:-.02em}
+.game-card p{color:var(--muted);margin:0 0 16px;font-size:.93rem;max-width:420px}
+.card-foot{margin-top:auto;display:flex;align-items:center;gap:12px;width:100%;justify-content:space-between}
+.play{background:var(--accent);color:#141321;font-weight:800;border-radius:12px;padding:10px 16px;border:0;transition:filter .15s}
+.game-card:hover .play{filter:brightness(1.1)}
+.best{color:var(--muted);font-size:.82rem}
+.best b{color:var(--text)}
+
+/* panels */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.panel + .panel{margin-top:18px}
+.panel h3{margin:0 0 4px;font-size:1.1rem}
+.sub{color:var(--muted);margin:0 0 16px;font-size:.9rem}
+.seg-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700;margin:14px 0 8px}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:#0e121b;border:1px solid var(--line);border-radius:14px}
+.seg button{border:0;background:transparent;color:var(--muted);padding:8px 14px;border-radius:10px;font-weight:700;font-size:.9rem;transition:background .15s,color .15s}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--panel3);color:var(--text);box-shadow:inset 0 0 0 1px #ffffff14}
+.seg.diff button.on[data-d="easy"]{color:var(--easy)}
+.seg.diff button.on[data-d="normal"]{color:var(--normal)}
+.seg.diff button.on[data-d="hard"]{color:var(--hard)}
+.small-btn{background:transparent;color:var(--muted);border:1px solid var(--line);padding:8px 13px;border-radius:10px;font-size:.88rem}
+.small-btn:hover{color:var(--text);border-color:#4a5578}
+
+/* leaderboard */
+.leader-row{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:12px 8px;border-bottom:1px solid var(--line);border-radius:10px}
+.leader-row:last-child{border-bottom:0}
+.leader-row.me{background:#9b8cff14}
+.rank{font-weight:900;color:var(--muted);font-size:.95rem}
+.rank.top{font-size:1.2rem}
+.leader-row strong{font-variant-numeric:tabular-nums}
+.empty{color:var(--muted);padding:18px 0;text-align:center}
+
+/* personal best table */
+.pb{width:100%;border-collapse:collapse;font-size:.92rem}
+.pb th,.pb td{padding:11px 8px;text-align:left;border-bottom:1px solid var(--line)}
+.pb tr:last-child td{border-bottom:0}
+.pb th{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.pb td.num{font-variant-numeric:tabular-nums;font-weight:700}
+.pb td.dim{color:var(--muted)}
+
+footer{padding:34px 0 40px;color:var(--muted);font-size:.82rem}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:#06080dd9;backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.overlay.open{display:flex}
+.modal{width:min(660px,100%);max-height:94vh;overflow:auto;background:#151a26;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 30px 100px #000a;animation:pop .2s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.modal-head h2{margin:0;font-size:1.3rem;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.badge{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:4px 9px;border-radius:99px;border:1px solid currentColor}
+.badge.easy{color:var(--easy)}.badge.normal{color:var(--normal)}.badge.hard{color:var(--hard)}
+.close{background:transparent;border:1px solid var(--line);border-radius:10px;padding:6px 11px;color:var(--muted)}
+.close:hover{color:var(--text)}
+.hud{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.9rem;margin:14px 0 0}
+.hud b{color:var(--text)}
+.bar{height:5px;background:#0e121b;border-radius:9px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--mint),var(--accent));transition:width .25s linear}
+.play-area{margin-top:14px;background:#0e121b;border:1px solid var(--line);border-radius:18px;padding:22px 18px;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.play-area p{color:var(--muted);margin:4px 0}
+.play-area h3{margin:0 0 4px;font-size:1.3rem}
+.desc{max-width:420px}
+.primary{border:0;border-radius:12px;padding:12px 20px;background:var(--accent);color:#141321;font-weight:800;margin-top:12px;transition:filter .15s,transform .1s}
+.primary:hover{filter:brightness(1.1)}.primary:active{transform:scale(.98)}
+.primary:disabled{opacity:.5;cursor:not-allowed}
+.ghost{border:1px solid var(--line);background:transparent;border-radius:12px;padding:11px 18px;font-weight:700;color:var(--muted);margin-top:12px}
+.ghost:hover{color:var(--text);border-color:#4a5578}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.rules{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0 4px}
+.rules span{font-size:.8rem;color:var(--muted);background:#ffffff08;border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+
+/* odd color */
+.grid{display:grid;gap:8px;justify-content:center;margin:12px auto}
+.tile{aspect-ratio:1;border:0;border-radius:12px;width:100%;padding:0;transition:transform .1s}
+.tile:hover{transform:scale(1.04)}
+/* reaction */
+.big{font-size:3rem;font-weight:900;letter-spacing:-.05em;line-height:1.1}
+.reaction-pad{width:min(100%,420px);height:170px;border-radius:18px;border:0;color:#fff;font-size:1.15rem;font-weight:800;transition:background .12s}
+.tries{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.tries i{width:30px;height:7px;border-radius:9px;background:var(--panel3)}
+.tries i.done{background:var(--mint)}.tries i.bad{background:var(--bad)}
+/* memory */
+.memory-grid{display:grid;grid-template-columns:repeat(3,minmax(0,78px));gap:10px;justify-content:center;margin:12px auto}
+.memory-tile{aspect-ratio:1;border-radius:14px;border:1px solid var(--line);background:var(--panel3);transition:background .1s,box-shadow .1s}
+.memory-tile.lit{background:var(--mint);box-shadow:0 0 28px #72f0c166}
+.memory-tile:not(:disabled):hover{border-color:#5b6890}
+/* search */
+.search-options{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:14px auto;max-width:460px}
+.search-option{background:var(--panel2);border:1px solid var(--line);padding:12px 0;border-radius:12px;min-width:64px;font-weight:800;font-size:1.05rem;transition:background .12s}
+.search-option:hover{background:var(--panel3)}
+.target-num{color:var(--mint);font-size:2.2rem;font-weight:900;margin-left:6px}
+/* submit */
+.submit-box{width:100%;max-width:340px;margin-top:10px}
+.submit-box input{width:100%;background:#0b0e16;color:var(--text);border:1px solid var(--line);padding:12px 14px;border-radius:12px;font:inherit;margin:6px 0 2px}
+.submit-box label{font-size:.8rem;color:var(--muted);display:block;text-align:left}
+.msg{min-height:1.4em;font-size:.88rem;margin-top:6px}
+.msg.ok{color:var(--mint)}.msg.err{color:var(--bad)}
+
+@media(max-width:650px){
+  .wrap{padding:0 16px}
+  header{padding:18px 0}
+  .games{grid-template-columns:1fr}
+  .game-card{min-height:190px}
+  .panel{padding:16px}
+  .modal{padding:16px}
+  .play-area{padding:18px 12px}
+  .memory-grid{grid-template-columns:repeat(3,64px)}
+  .tag{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<header><div class="brand">percept<span>.</span></div><div class="tag">FREE MINI-GAME ARCADE</div></header>
-<main>
-<section class="hero">
-<div class="eyebrow">Train your eyes. Beat your best.</div>
-<h1>How sharp is your <span style="color:var(--mint)">perception?</span></h1>
-<p>Four tiny challenges. Quick rounds. One more try. Play for free and see if you can beat your personal best.</p>
-<div class="stats"><div class="stat"><strong>4</strong> quick games</div><div class="stat"><strong>15–60s</strong> per session</div><div class="stat"><strong>£0</strong> to play</div></div>
-</section>
-<div class="section-head"><div><h2>Choose your challenge</h2><p>Pick a game and jump straight in.</p></div></div>
-<section class="games">
-<article class="game-card"><div class="game-icon">◩</div><h3>Odd Color Out</h3><p>Find the slightly different tile. Keep going as the grid gets trickier.</p><button onclick="openGame('color')">Play game →</button></article>
-<article class="game-card"><div class="game-icon">⚡</div><h3>Reaction Rush</h3><p>Wait for the green signal, then click as fast as you can. Don't jump the gun.</p><button onclick="openGame('reaction')">Play game →</button></article>
-<article class="game-card"><div class="game-icon">▦</div><h3>Pattern Recall</h3><p>Memorize a sequence of glowing tiles, then repeat it from memory.</p><button onclick="openGame('memory')">Play game →</button></article>
-<article class="game-card"><div class="game-icon">⌕</div><h3>Symbol Sprint</h3><p>Find the target number among distractions before the clock runs out.</p><button onclick="openGame('search')">Play game →</button></article>
-</section>
+<div class="wrap">
+  <header><div class="brand">percept<span>.</span></div><div class="tag">FREE MINI-GAME ARCADE</div></header>
 
+  <section class="hero">
+    <div class="eyebrow">Train your eyes. Beat your best.</div>
+    <h1>How sharp is your <span class="grad">perception?</span></h1>
+    <p>Four tiny challenges at three difficulty levels. Quick rounds, one more try, and a global leaderboard to climb.</p>
+    <div class="chips"><div class="chip"><strong>4</strong> quick games</div><div class="chip"><strong>3</strong> difficulties</div><div class="chip"><strong>£0</strong> to play</div></div>
+  </section>
 
-<section class="panel">
-  <div class="section-head" style="margin-top:0">
-    <div>
-      <h2>🌍 Global leaderboard</h2>
-      <p class="sub">Scores from players around the world.</p>
+  <div class="section-head"><div><h2>Choose your challenge</h2><p>Pick a game, then choose your difficulty.</p></div></div>
+  <section class="games" id="games"></section>
+
+  <div class="section-head"><div><h2>Leaderboard</h2><p>Top 10 scores from players around the world.</p></div></div>
+  <section class="panel">
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <div class="seg-label" style="margin-top:0">Game</div>
+        <div class="seg" id="lb-game"></div>
+      </div>
+      <div>
+        <div class="seg-label" style="margin-top:0">Difficulty</div>
+        <div class="seg diff" id="lb-diff"></div>
+      </div>
     </div>
-    <button class="small-btn" onclick="loadLeaderboard()">Refresh</button>
-  </div>
+    <div id="leaderboard" style="margin-top:14px"><div class="empty">Loading scores…</div></div>
+    <div style="margin-top:10px"><button class="small-btn" onclick="loadLeaderboard()">Refresh</button></div>
+  </section>
 
-  <label for="leaderboard-game">Choose a game</label>
-  <select id="leaderboard-game" onchange="loadLeaderboard()" style="display:block;width:100%;max-width:320px;margin:10px 0;padding:11px;background:#10141f;color:white;border:1px solid #30394d;border-radius:10px;font:inherit">
-    <option value="odd-color">Odd Color Out</option>
-    <option value="reaction">Reaction Rush</option>
-    <option value="pattern">Pattern Recall</option>
-    <option value="symbol">Symbol Sprint</option>
-  </select>
+  <div class="section-head"><div><h2>Your personal bests</h2><p>Saved in this browser.</p></div><button class="small-btn" onclick="resetScores()">Reset</button></div>
+  <section class="panel" style="padding-top:10px;padding-bottom:10px"><div id="personal-bests"></div></section>
 
-  <label for="leaderboard-difficulty">Choose difficulty</label>
-  <select id="leaderboard-difficulty" onchange="loadLeaderboard()" style="display:block;width:100%;max-width:320px;margin:10px 0;padding:11px;background:#10141f;color:white;border:1px solid #30394d;border-radius:10px;font:inherit">
-    <option value="easy">Easy</option>
-    <option value="normal" selected>Normal</option>
-    <option value="hard">Hard</option>
-  </select>
-
-  <div id="leaderboard"><div class="empty">Loading scores…</div></div>
-</section>
-
-<section class="panel"><h2>How scoring works</h2><p class="sub">Each game has its own best score. Try to improve your personal records, then we'll connect a global leaderboard.</p><div id="personal-bests"></div></section>
-</main>
-<footer>Percept is a free mini-game prototype. Scores are for fun and are not scientific measurements of perception or reaction ability.</footer>
-<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-<div class="modal"><div class="modal-head"><h2 id="modal-title">Game</h2><button class="close" onclick="closeGame()" aria-label="Close game">✕</button></div><div class="game-info"><span id="game-status">Ready</span><span id="game-score">Score: 0</span></div><div class="play-area" id="play-area"></div></div>
+  <footer>Percept is a free mini-game prototype. Scores are for fun and are not scientific measurements of perception or reaction ability.</footer>
 </div>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <div class="modal-head"><h2><span id="modal-title">Game</span><span class="badge" id="modal-badge" style="display:none"></span></h2><button class="close" onclick="closeGame()" aria-label="Close game">✕</button></div>
+    <div class="hud"><span id="game-status">Ready</span><span id="game-score">Score: <b>0</b></span></div>
+    <div class="bar" id="bar" style="display:none"><i id="bar-fill"></i></div>
+    <div class="play-area" id="play-area"></div>
+  </div>
+</div>
+
 <script>
 const SUPABASE_URL = 'https://pilqnhsrexzdurkxvwzp.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_3wM8OhqxZuTAarh27Dcb5Q_8GBRQekE';
 
-const titles={color:'Odd Color Out',reaction:'Reaction Rush',memory:'Pattern Recall',search:'Symbol Sprint'};
-let current='',score=0,round=0,timer=null,started=0,sequence=[],step=0,accepting=false,gameEnd=0;
-const $=id=>document.getElementById(id);
-function getScores(){try{return JSON.parse(localStorage.getItem('perceptScores')||'{}')}catch{return {}}}
-  
+const $ = id => document.getElementById(id);
+const DIFFS = ['easy','normal','hard'];
+const DIFF_LABEL = {easy:'Easy',normal:'Normal',hard:'Hard'};
 
-async function loadLeaderboard() {
-  const board = $('leaderboard');
-  const game = $('leaderboard-game').value;
-  const difficulty = $('leaderboard-difficulty').value;
+/* key = internal id; db = value stored in Supabase */
+const GAMES = {
+  color:  {db:'odd-color', title:'Odd Color Out', icon:'◩', glow:'#9b8cff40', blurb:'Find the slightly different tile. Each round gets trickier.'},
+  reaction:{db:'reaction', title:'Reaction Rush', icon:'⚡', glow:'#ffb86b33', blurb:'Wait for green, then click as fast as you can. Don\u2019t jump the gun.'},
+  memory: {db:'pattern',  title:'Pattern Recall', icon:'▦', glow:'#72f0c133', blurb:'Memorise a sequence of glowing tiles, then repeat it from memory.'},
+  search: {db:'symbol',   title:'Symbol Sprint', icon:'⌕', glow:'#ff8a9b33', blurb:'Spot the target number among the distractions before time runs out.'}
+};
 
-  board.innerHTML = '<div class="empty">Loading scores...</div>';
-
-  try {
-    const url = SUPABASE_URL +
-      '/rest/v1/scores?select=nickname,game,difficulty,score,created_at' +
-      '&game=eq.' + encodeURIComponent(game) +
-      '&difficulty=eq.' + encodeURIComponent(difficulty) +
-      '&order=score.desc&limit=10';
-
-    const response = await fetch(url, {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Could not load scores');
-    }
-
-    const scores = await response.json();
-
-    if (scores.length === 0) {
-      board.innerHTML =
-        '<div class="empty">No scores for this difficulty yet. Be the first!</div>';
-      return;
-    }
-
-    board.innerHTML = scores.map((entry, index) =>
-      '<div class="leader-row">' +
-        '<div class="rank">#' + (index + 1) + '</div>' +
-        '<div>' + escapeHTML(entry.nickname) + '</div>' +
-        '<strong>' + entry.score + '</strong>' +
-      '</div>'
-    ).join('');
-  } catch (error) {
-    board.innerHTML =
-      '<div class="empty">Could not load scores. Please check your Supabase settings.</div>';
+/* difficulty settings per game */
+const CFG = {
+  color: {
+    easy:  {rounds:12, cols:3, start:24, min:10, step:1.2, info:['12 rounds','3×3 grid','Big colour gaps']},
+    normal:{rounds:15, cols:4, start:18, min:5,  step:1,   info:['15 rounds','4×4 grid','Medium colour gaps']},
+    hard:  {rounds:20, cols:5, start:13, min:2.5,step:.6,  info:['20 rounds','5×5 grid','Tiny colour gaps']}
+  },
+  reaction: {
+    easy:  {tries:5, min:1500, max:3500, forgive:true, info:['5 tries','Short, predictable waits','False starts are free']},
+    normal:{tries:3, min:1200, max:4200, forgive:false,info:['3 tries','Random waits','False start = 0 for that try']},
+    hard:  {tries:3, min:800,  max:6000, forgive:false,info:['3 tries','Long, unpredictable waits','False start = 0 for that try']}
+  },
+  memory: {
+    easy:  {flash:650, gap:220, max:8,  info:['Up to level 8','Slow playback']},
+    normal:{flash:400, gap:180, max:12, info:['Up to level 12','Medium playback']},
+    hard:  {flash:250, gap:120, max:15, info:['Up to level 15','Fast playback']}
+  },
+  search: {
+    easy:  {secs:25, count:9,  penalty:0,  lo:1,  hi:9,  info:['25 seconds','9 options','No penalty for misses']},
+    normal:{secs:20, count:12, penalty:5,  lo:1,  hi:9,  info:['20 seconds','12 options','−5 per miss']},
+    hard:  {secs:15, count:16, penalty:10, lo:10, hi:39, info:['15 seconds','16 options, two digits','−10 per miss']}
   }
+};
+
+let current='', diff='normal', score=0, round=0, timer=null, started=0;
+let sequence=[], step=0, accepting=false, gameEnd=0, submitted=false;
+let tries=[], lbGame='color', lbDiff='normal';
+let lastDiff = (()=>{try{return localStorage.getItem('perceptDiff')||'normal'}catch{return 'normal'}})();
+if(!DIFFS.includes(lastDiff)) lastDiff='normal';
+
+/* ---------- storage ---------- */
+function getScores(){try{return JSON.parse(localStorage.getItem('perceptScores2')||'{}')}catch{return {}}}
+function best(game,d){return getScores()[game+'|'+d]||0}
+function saveScore(game,d,value){
+  const all=getScores(), k=game+'|'+d;
+  all[k]=Math.max(all[k]||0,value);
+  try{localStorage.setItem('perceptScores2',JSON.stringify(all))}catch{}
+  renderAll();
 }
+function getNick(){try{return localStorage.getItem('perceptNick')||''}catch{return ''}}
 
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, character => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  })[character]);
-}
-  
-async function submitOnlineScore(game, value) {
-  const nicknameInput = $('nickname');
-  const nickname = nicknameInput.value.trim();
-
-  if (!nickname) {
-    alert('Please enter a nickname first.');
-    nicknameInput.focus();
-    return;
-  }
-
-  if (nickname.length > 20) {
-    alert('Your nickname must be 20 characters or fewer.');
-    return;
-  }
-
-  const gameNames = {
-    color: 'odd-color',
-    reaction: 'reaction',
-    memory: 'pattern',
-    search: 'symbol'
-  };
-
-  try {
-    const response = await fetch(SUPABASE_URL + '/rest/v1/scores', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-  nickname: nickname,
-  game: gameNames[game],
-  difficulty: $('leaderboard-difficulty').value,
-  score: value
-})
-    });
-
-    if (!response.ok) {
-      throw new Error('Score submission failed');
-    }
-
-    alert('Score submitted! Good luck on the leaderboard.');
-    loadLeaderboard();
-  } catch (error) {
-    alert('Could not submit your score. Please check your Supabase settings and try again.');
-  }
-}
-
-
-function saveScore(game,value){const all=getScores();all[game]=Math.max(all[game]||0,value);localStorage.setItem('perceptScores',JSON.stringify(all));renderScores()}
+/* ---------- helpers ---------- */
+function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c])}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function setStatus(s){$('game-status').textContent=s}
-function setScore(s){score=s;$('game-score').textContent='Score: '+score}
-function openGame(game){clearTimeout(timer);current=game;score=0;round=0;$('modal-title').textContent=titles[game];$('overlay').classList.add('open');setStatus('Ready');setScore(0);if(game==='color')startColor();if(game==='reaction')reactionIntro();if(game==='memory')memoryIntro();if(game==='search')searchIntro()}
-function closeGame(){clearTimeout(timer);$('overlay').classList.remove('open');accepting=false;renderScores()}
-function finish(message){
-  clearTimeout(timer);
-  accepting=false;
-  saveScore(current,score);
+function setScore(s){score=s;$('game-score').innerHTML='Score: <b>'+score+'</b>'}
+function showBar(on){$('bar').style.display=on?'block':'none'}
+function setBar(p){$('bar-fill').style.width=Math.max(0,Math.min(100,p))+'%'}
+function clearTimer(){clearTimeout(timer);timer=null}
 
-  $('play-area').innerHTML =
-    '<div class="target">' +
-      (score>0?'Nice run!':'Good try!') +
-    '</div>' +
-    '<p>'+message+'</p>' +
-    '<p>Your score: <strong>'+score+'</strong></p>' +
-    '<label for="nickname">Nickname (max 20 characters)</label>' +
-    '<input id="nickname" maxlength="20" placeholder="Enter your nickname" ' +
-      'style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:10px 0;background:#10141f;color:white;border:1px solid #30394d;border-radius:10px;font:inherit">' +
-    '<button class="primary" onclick="submitOnlineScore(current,score)">Submit score globally</button>' +
-    '<button class="primary" onclick="openGame(current)">Play again</button>';
-
-  setStatus('Finished');
+/* ---------- home rendering ---------- */
+function renderCards(){
+  $('games').innerHTML = Object.entries(GAMES).map(([k,g])=>{
+    const bests = DIFFS.map(d=>best(k,d)).filter(Boolean);
+    const top = bests.length?Math.max(...bests):0;
+    return `<button class="game-card" style="--glow:${g.glow}" onclick="openGame('${k}')">
+      <div class="game-icon">${g.icon}</div>
+      <h3>${g.title}</h3>
+      <p>${g.blurb}</p>
+      <div class="card-foot"><span class="best">${top?'Best: <b>'+top+'</b>':'Not played yet'}</span><span class="play">Play →</span></div>
+    </button>`}).join('');
 }
-function startColor(){score=0;round=0;setScore(0);setStatus('Find the odd tile');colorRound()}
-function colorRound(){if(round>=15){finish('You cleared all 15 rounds.');return}round++;setStatus('Round '+round+' of 15');let hue=Math.floor(Math.random()*360),diff=Math.max(4,19-round);let odd=Math.floor(Math.random()*16);let tiles='';for(let i=0;i<16;i++){let light=i===odd?Math.min(82,55+diff):55;tiles+=`<button class="tile" aria-label="Color tile ${i+1}" style="background:hsl(${hue} 72% ${light}%)" onclick="colorPick(${i===odd})"></button>`}$('play-area').innerHTML='<p>Tap the tile that looks different.</p><div class="grid">'+tiles+'</div><p>Round '+round+' / 15</p>'}
-function colorPick(correct){if(!correct){finish('That tile was not the odd one out.');return}score+=round*10;setScore(score);colorRound()}
-function reactionIntro(){$('play-area').innerHTML='<p>Wait for the panel to turn green. Then click it as quickly as possible.</p><button class="primary" onclick="reactionWait()">Start reaction test</button>';setStatus('Ready')}
-function reactionWait(){clearTimeout(timer);accepting=false;$('play-area').innerHTML='<button class="reaction-pad" style="background:#9a6532" onclick="reactionClick()">Wait for green…</button>';setStatus('Wait…');let delay=1200+Math.random()*3000;timer=setTimeout(()=>{started=performance.now();accepting=true;$('play-area').innerHTML='<button class="reaction-pad" style="background:#168c65" onclick="reactionClick()">CLICK NOW!</button>';setStatus('Go!')},delay)}
-function reactionClick(){if(!started){clearTimeout(timer);finish('Too early! Wait for green before clicking.');return}if(!accepting)return;let ms=Math.round(performance.now()-started);score=Math.max(0,1000-ms);setScore(score);started=0;accepting=false;$('play-area').innerHTML=`<div class="target">${ms} ms</div><p>${ms<250?'Lightning fast!':ms<350?'Nice reaction.':'Try to get even quicker.'}</p><button class="primary" onclick="reactionWait()">Try again</button><button class="small-btn" style="margin-left:8px" onclick="finish('Best reaction score saved.')">Finish</button>`;setStatus('Reaction recorded')}
-function memoryIntro(){$('play-area').innerHTML='<p>Watch the tiles light up, then repeat the pattern in the same order.</p><button class="primary" onclick="memoryStart()">Start memory test</button>';setStatus('Ready')}
-function memoryStart(){score=0;round=0;sequence=[];setScore(0);memoryNext()}
-function memoryNext(){round++;step=0;sequence.push(Math.floor(Math.random()*9));setStatus('Level '+round);memoryDraw();let i=0;function flash(){if(i>=sequence.length){accepting=true;$('play-area').querySelectorAll('.memory-tile').forEach(b=>b.disabled=false);setStatus('Your turn');return}let b=$('play-area').querySelector('[data-i="'+sequence[i]+'"]');if(b)b.classList.add('lit');setTimeout(()=>{if(b)b.classList.remove('lit');i++;setTimeout(flash,180)},380)}accepting=false;flash()}
-function memoryDraw(){$('play-area').innerHTML='<p>Remember the sequence.</p><div class="memory-grid">'+Array.from({length:9},(_,i)=>`<button class="memory-tile" data-i="${i}" disabled onclick="memoryPick(${i})" aria-label="Tile ${i+1}"></button>`).join('')+'</div><p>Level '+round+'</p>'}
-function memoryPick(i){if(!accepting)return;if(i!==sequence[step]){finish('You reached level '+round+'.');return}let b=$('play-area').querySelector('[data-i="'+i+'"]');b.classList.add('lit');setTimeout(()=>b.classList.remove('lit'),150);step++;score=round*10;setScore(score);if(step===sequence.length){accepting=false;if(round>=12){finish('You reached the top level!');return}setStatus('Correct!');timer=setTimeout(memoryNext,650)}}
-function searchIntro(){$('play-area').innerHTML='<p>Find the target number as many times as you can in 20 seconds.</p><button class="primary" onclick="searchStart()">Start sprint</button>';setStatus('Ready')}
-function searchStart(){score=0;round=0;setScore(0);gameEnd=Date.now()+20000;searchRound()}
-function searchRound(){if(Date.now()>=gameEnd){finish('Time is up.');return}round++;let target=String(1+Math.floor(Math.random()*9));let opts=[target];while(opts.length<12){let n=String(1+Math.floor(Math.random()*9));if(Math.random()<.75||n!==target)opts.push(n)}opts.sort(()=>Math.random()-.5);setStatus('20-second sprint');$('play-area').innerHTML=`<p>Find <strong style="color:var(--mint);font-size:1.5rem">${target}</strong></p><div class="search-options">${opts.map(n=>`<button class="search-option" onclick="searchPick('${n}','${target}')">${n}</button>`).join('')}</div><p id="countdown">Time left: ${Math.max(0,Math.ceil((gameEnd-Date.now())/1000))}s</p>`;timer=setTimeout(()=>{if(Date.now()>=gameEnd)finish('Time is up.');else{let c=$('countdown');if(c)c.textContent='Time left: '+Math.ceil((gameEnd-Date.now())/1000)+'s';searchTick()}},250)}
-function searchTick(){if(Date.now()>=gameEnd){finish('Time is up.');return}let c=$('countdown');if(c)c.textContent='Time left: '+Math.ceil((gameEnd-Date.now())/1000)+'s';timer=setTimeout(searchTick,250)}
-function searchPick(n,target){if(n===target){score+=10;setScore(score);searchRound()}else{score=Math.max(0,score-5);setScore(score)}}
-function resetScores(){if(confirm('Clear personal bests saved in this browser?')){localStorage.removeItem('perceptScores');renderScores()}}
 function renderScores(){
-  const scores = getScores();
-
-  const entries = Object.entries(titles).map(([key,title]) => ({
-    key,
-    title,
-    score: scores[key] || 0
-  }));
-
-  $('personal-bests').innerHTML = entries.map(entry =>
-    '<div class="leader-row">' +
-      '<div class="rank">★</div>' +
-      '<div>' + entry.title + '</div>' +
-      '<strong>' + (entry.score || '—') + '</strong>' +
-    '</div>'
-  ).join('');
+  const rows = Object.entries(GAMES).map(([k,g])=>
+    '<tr><td>'+g.title+'</td>'+DIFFS.map(d=>{const v=best(k,d);return '<td class="num'+(v?'':' dim')+'">'+(v||'—')+'</td>'}).join('')+'</tr>').join('');
+  $('personal-bests').innerHTML='<table class="pb"><thead><tr><th>Game</th>'+DIFFS.map(d=>'<th>'+DIFF_LABEL[d]+'</th>').join('')+'</tr></thead><tbody>'+rows+'</tbody></table>';
 }
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')closeGame();
-});
+function renderAll(){renderCards();renderScores()}
 
-renderScores();
+/* ---------- leaderboard ---------- */
+function renderLbControls(){
+  $('lb-game').innerHTML = Object.entries(GAMES).map(([k,g])=>`<button class="${k===lbGame?'on':''}" onclick="setLb('${k}',null)">${g.title}</button>`).join('');
+  $('lb-diff').innerHTML = DIFFS.map(d=>`<button data-d="${d}" class="${d===lbDiff?'on':''}" onclick="setLb(null,'${d}')">${DIFF_LABEL[d]}</button>`).join('');
+}
+function setLb(g,d){if(g)lbGame=g;if(d)lbDiff=d;renderLbControls();loadLeaderboard()}
+
+async function loadLeaderboard(){
+  const board=$('leaderboard');
+  board.innerHTML='<div class="empty">Loading scores…</div>';
+  try{
+    const url=SUPABASE_URL+'/rest/v1/scores?select=nickname,game,difficulty,score,created_at'
+      +'&game=eq.'+encodeURIComponent(GAMES[lbGame].db)
+      +'&difficulty=eq.'+encodeURIComponent(lbDiff)
+      +'&order=score.desc&limit=10';
+    const res=await fetch(url,{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}});
+    if(!res.ok)throw new Error('load failed');
+    const scores=await res.json();
+    if(!scores.length){board.innerHTML='<div class="empty">No scores here yet. Be the first!</div>';return}
+    const me=getNick().toLowerCase();
+    const medals=['🥇','🥈','🥉'];
+    board.innerHTML=scores.map((e,i)=>
+      '<div class="leader-row'+(me&&String(e.nickname).toLowerCase()===me?' me':'')+'">'
+      +'<div class="rank'+(i<3?' top':'')+'">'+(i<3?medals[i]:'#'+(i+1))+'</div>'
+      +'<div>'+escapeHTML(e.nickname)+'</div><strong>'+e.score+'</strong></div>').join('');
+  }catch(err){
+    board.innerHTML='<div class="empty">Could not load scores right now. Please try again.</div>';
+  }
+}
+
+/* ---------- modal flow ---------- */
+function openGame(game){
+  clearTimer();current=game;
+  $('modal-title').textContent=GAMES[game].title;
+  $('overlay').classList.add('open');
+  showIntro();
+}
+function closeGame(){
+  clearTimer();accepting=false;started=0;
+  $('overlay').classList.remove('open');
+  renderAll();
+}
+function badge(){
+  const b=$('modal-badge');b.style.display='';b.className='badge '+diff;b.textContent=DIFF_LABEL[diff];
+}
+function showIntro(){
+  clearTimer();accepting=false;started=0;showBar(false);
+  $('modal-badge').style.display='none';
+  setScore(0);setStatus('Choose a difficulty');
+  diff=lastDiff;
+  const g=GAMES[current];
+  $('play-area').innerHTML=
+    '<div class="game-icon" style="margin-bottom:6px">'+g.icon+'</div>'
+    +'<h3>'+g.title+'</h3><p class="desc">'+g.blurb+'</p>'
+    +'<div class="seg-label">Difficulty</div>'
+    +'<div class="seg diff" id="intro-diff">'+DIFFS.map(d=>'<button data-d="'+d+'" class="'+(d===diff?'on':'')+'" onclick="pickDiff(\''+d+'\')">'+DIFF_LABEL[d]+'</button>').join('')+'</div>'
+    +'<div class="rules" id="intro-rules"></div>'
+    +'<p id="intro-best" style="font-size:.85rem"></p>'
+    +'<button class="primary" onclick="startGame()">Start game</button>';
+  refreshIntro();
+}
+function pickDiff(d){
+  diff=d;lastDiff=d;
+  try{localStorage.setItem('perceptDiff',d)}catch{}
+  document.querySelectorAll('#intro-diff button').forEach(b=>b.classList.toggle('on',b.dataset.d===d));
+  refreshIntro();
+}
+function refreshIntro(){
+  $('intro-rules').innerHTML=CFG[current][diff].info.map(t=>'<span>'+t+'</span>').join('');
+  const b=best(current,diff);
+  $('intro-best').textContent=b?'Your best on '+DIFF_LABEL[diff]+': '+b:'No score on '+DIFF_LABEL[diff]+' yet';
+}
+function startGame(){
+  lastDiff=diff;submitted=false;badge();
+  ({color:startColor,reaction:startReaction,memory:startMemory,search:startSearch})[current]();
+}
+
+/* ---------- finish + submit ---------- */
+function finish(message){
+  clearTimer();accepting=false;started=0;showBar(false);
+  saveScore(current,diff,score);
+  setStatus('Finished');
+  const nick=escapeHTML(getNick());
+  $('play-area').innerHTML=
+    '<div class="big">'+(score>0?'Nice run!':'Good try!')+'</div>'
+    +'<p>'+message+'</p>'
+    +'<p>Your score: <strong style="color:var(--text);font-size:1.3rem">'+score+'</strong> <span class="badge '+diff+'" style="margin-left:6px">'+DIFF_LABEL[diff]+'</span></p>'
+    +(score>0
+      ?'<div class="submit-box"><label for="nickname">Nickname (max 20 characters)</label>'
+        +'<input id="nickname" maxlength="20" placeholder="Enter your nickname" value="'+nick+'" autocomplete="nickname">'
+        +'<button class="primary" id="submit-btn" style="width:100%" onclick="submitOnlineScore()">Submit to leaderboard</button>'
+        +'<div class="msg" id="submit-msg" role="status"></div></div>'
+      :'<p>Score something above 0 to submit to the leaderboard.</p>')
+    +'<div class="btn-row"><button class="ghost" onclick="startGame()">Play again</button><button class="ghost" onclick="showIntro()">Change difficulty</button></div>';
+}
+async function submitOnlineScore(){
+  if(submitted)return;
+  const input=$('nickname'),msg=$('submit-msg'),btn=$('submit-btn');
+  const nickname=input.value.trim();
+  const say=(t,c)=>{msg.textContent=t;msg.className='msg '+c};
+  if(!nickname){say('Please enter a nickname first.','err');input.focus();return}
+  if(nickname.length>20){say('Nickname must be 20 characters or fewer.','err');return}
+  btn.disabled=true;say('Submitting…','');
+  try{
+    const res=await fetch(SUPABASE_URL+'/rest/v1/scores',{
+      method:'POST',
+      headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},
+      body:JSON.stringify({nickname,game:GAMES[current].db,difficulty:diff,score})
+    });
+    if(!res.ok)throw new Error('failed');
+    submitted=true;
+    try{localStorage.setItem('perceptNick',nickname)}catch{}
+    btn.textContent='Submitted ✓';
+    say('Score submitted. Good luck on the leaderboard!','ok');
+    lbGame=current;lbDiff=diff;renderLbControls();loadLeaderboard();
+  }catch(e){
+    btn.disabled=false;say('Could not submit your score. Please try again.','err');
+  }
+}
+
+/* ---------- Odd Color Out ---------- */
+function startColor(){round=0;setScore(0);colorRound()}
+function colorRound(){
+  const c=CFG.color[diff];
+  if(round>=c.rounds){finish('You cleared all '+c.rounds+' rounds!');return}
+  round++;
+  setStatus('Round '+round+' of '+c.rounds);showBar(true);setBar((round-1)/c.rounds*100);
+  const n=c.cols*c.cols,hue=Math.floor(Math.random()*360),odd=Math.floor(Math.random()*n);
+  const delta=Math.max(c.min,c.start-(round-1)*c.step);
+  let tiles='';
+  for(let i=0;i<n;i++){
+    const light=i===odd?55+delta:55;
+    tiles+='<button class="tile" aria-label="Colour tile '+(i+1)+'" style="background:hsl('+hue+' 72% '+light+'%)" onclick="colorPick('+(i===odd)+')"></button>';
+  }
+  const size=Math.min(380,c.cols*86);
+  $('play-area').innerHTML='<p>Tap the tile that looks different.</p><div class="grid" style="grid-template-columns:repeat('+c.cols+',1fr);width:'+size+'px;max-width:100%">'+tiles+'</div>';
+}
+function colorPick(ok){
+  if(!ok){finish('That tile wasn\u2019t the odd one out. You reached round '+round+'.');return}
+  setScore(score+round*10);colorRound();
+}
+
+/* ---------- Reaction Rush ---------- */
+function startReaction(){tries=[];setScore(0);reactionWait()}
+function triesBar(){
+  const c=CFG.reaction[diff];
+  return '<div class="tries">'+Array.from({length:c.tries},(_,i)=>'<i class="'+(tries[i]===undefined?'':tries[i]===null?'bad':'done')+'"></i>').join('')+'</div>';
+}
+function reactionWait(){
+  clearTimer();accepting=false;started=0;showBar(false);
+  const c=CFG.reaction[diff];
+  setStatus('Try '+(tries.length+1)+' of '+c.tries);
+  $('play-area').innerHTML='<button class="reaction-pad" style="background:#8a5a2e" onclick="reactionClick()">Wait for green…</button>'+triesBar();
+  timer=setTimeout(()=>{
+    started=performance.now();accepting=true;
+    $('play-area').innerHTML='<button class="reaction-pad" style="background:#168c65" onclick="reactionClick()">CLICK NOW!</button>'+triesBar();
+    setStatus('Go!');
+  },c.min+Math.random()*(c.max-c.min));
+}
+function reactionClick(){
+  const c=CFG.reaction[diff];
+  if(!accepting){
+    clearTimer();
+    if(c.forgive){
+      $('play-area').innerHTML='<div class="big" style="color:var(--warn)">Too early!</div><p>False start. It doesn\u2019t count on Easy.</p><button class="primary" onclick="reactionWait()">Try again</button>'+triesBar();
+      setStatus('False start');return;
+    }
+    tries.push(null);
+    return reactionAfter('<div class="big" style="color:var(--bad)">Too early!</div><p>That try scores 0.</p>');
+  }
+  const ms=Math.round(performance.now()-started);
+  accepting=false;started=0;
+  tries.push(ms);
+  setScore(Math.max(score,Math.max(0,1000-ms)));
+  reactionAfter('<div class="big">'+ms+' ms</div><p>'+(ms<250?'Lightning fast!':ms<350?'Nice reaction.':'Try to get even quicker.')+'</p>');
+}
+function reactionAfter(html){
+  const c=CFG.reaction[diff],last=tries.length>=c.tries;
+  setStatus('Try '+tries.length+' of '+c.tries+' done');
+  $('play-area').innerHTML=html+triesBar()
+    +(last?'<button class="primary" onclick="finish(\'Best reaction: \'+bestMs()+\'.\')">See results</button>'
+          :'<button class="primary" onclick="reactionWait()">Next try</button>');
+}
+function bestMs(){const v=tries.filter(x=>x!==null);return v.length?Math.min(...v)+' ms':'none'}
+
+/* ---------- Pattern Recall ---------- */
+function startMemory(){score=0;round=0;sequence=[];setScore(0);showBar(false);memoryNext()}
+function memoryNext(){
+  const c=CFG.memory[diff];
+  round++;step=0;accepting=false;
+  sequence.push(Math.floor(Math.random()*9));
+  setStatus('Level '+round+' of '+c.max+' · watch');
+  showBar(true);setBar((round-1)/c.max*100);
+  memoryDraw('Remember the sequence.');
+  let i=0;
+  (function flash(){
+    if(!$('overlay').classList.contains('open')||current!=='memory')return;
+    if(i>=sequence.length){
+      accepting=true;
+      $('play-area').querySelectorAll('.memory-tile').forEach(b=>b.disabled=false);
+      $('play-area').querySelector('p').textContent='Your turn. Repeat the pattern.';
+      setStatus('Level '+round+' of '+c.max+' · your turn');return;
+    }
+    const b=$('play-area').querySelector('[data-i="'+sequence[i]+'"]');
+    if(b)b.classList.add('lit');
+    timer=setTimeout(()=>{if(b)b.classList.remove('lit');i++;timer=setTimeout(flash,c.gap)},c.flash);
+  })();
+}
+function memoryDraw(text){
+  $('play-area').innerHTML='<p>'+text+'</p><div class="memory-grid">'
+    +Array.from({length:9},(_,i)=>'<button class="memory-tile" data-i="'+i+'" disabled onclick="memoryPick('+i+')" aria-label="Tile '+(i+1)+'"></button>').join('')+'</div>';
+}
+function memoryPick(i){
+  if(!accepting)return;
+  const c=CFG.memory[diff];
+  if(i!==sequence[step]){finish('You reached level '+round+'.');return}
+  const b=$('play-area').querySelector('[data-i="'+i+'"]');
+  b.classList.add('lit');setTimeout(()=>b.classList.remove('lit'),150);
+  step++;setScore(round*10);
+  if(step===sequence.length){
+    accepting=false;
+    if(round>=c.max){setBar(100);finish('You reached the top level!');return}
+    setStatus('Correct!');
+    timer=setTimeout(memoryNext,650);
+  }
+}
+
+/* ---------- Symbol Sprint ---------- */
+function startSearch(){
+  const c=CFG.search[diff];
+  score=0;round=0;setScore(0);showBar(true);
+  gameEnd=Date.now()+c.secs*1000;
+  searchTick();searchRound();
+}
+function searchTick(){
+  const c=CFG.search[diff],left=gameEnd-Date.now();
+  if(left<=0){finish('Time is up!');return}
+  setBar(left/(c.secs*1000)*100);
+  setStatus(Math.ceil(left/1000)+'s left');
+  timer=setTimeout(searchTick,100);
+}
+function searchRound(){
+  const c=CFG.search[diff];
+  if(Date.now()>=gameEnd)return;
+  round++;
+  const rnd=()=>c.lo+Math.floor(Math.random()*(c.hi-c.lo+1));
+  const target=rnd(),opts=[target];
+  while(opts.length<c.count){const n=rnd();if(n!==target)opts.push(n)}
+  shuffle(opts);
+  $('play-area').innerHTML='<p>Find <span class="target-num">'+target+'</span></p><div class="search-options">'
+    +opts.map(n=>'<button class="search-option" onclick="searchPick('+n+','+target+')">'+n+'</button>').join('')+'</div>';
+}
+function searchPick(n,target){
+  if(Date.now()>=gameEnd)return;
+  const c=CFG.search[diff];
+  if(n===target){setScore(score+10);searchRound()}
+  else setScore(Math.max(0,score-c.penalty));
+}
+
+/* ---------- misc ---------- */
+function resetScores(){
+  if(confirm('Clear personal bests saved in this browser?')){
+    try{localStorage.removeItem('perceptScores2')}catch{}
+    renderAll();
+  }
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGame()});
+$('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))closeGame()});
+
+renderAll();
+renderLbControls();
 loadLeaderboard();
 </script>
-
 </body>
 </html>
