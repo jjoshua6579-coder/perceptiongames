@@ -234,7 +234,7 @@ footer{padding:34px 0 20px;color:var(--muted);font-size:.84rem;text-align:center
 
   <div class="section-head"><div><h2>Settings</h2><p>Personalise your game experience.</p></div></div>
   <section class="panel settings-panel">
-    <label class="setting-toggle"><span><strong>Sound effects</strong><small>Play simple sound effects generated in your browser.</small></span><input id="sound-toggle" type="checkbox" onchange="setSoundEnabled(this.checked)"></label>
+    <label class="setting-toggle"><span><strong>Sound effects</strong><small>Play game and crayon sounds generated in your browser.</small></span><input id="sound-toggle" type="checkbox" onchange="setSoundEnabled(this.checked)"></label>
     <button class="small-btn" type="button" onclick="resetLocalData()">Reset local stats &amp; achievements</button>
   </section>
 
@@ -395,7 +395,7 @@ function showBar(on){$('bar').hidden=!on}
 function setBar(p){$('bar-fill').style.width=Math.max(0,Math.min(100,p))+'%'}
 function clearTimer(){clearTimeout(timer);timer=null;clearTimeout(colorNextTimer);colorNextTimer=null}
 let soundEnabled=(()=>{try{return localStorage.getItem('perceptSound')==='true'}catch(e){return false}})();
-function setSoundEnabled(on){soundEnabled=!!on;try{localStorage.setItem('perceptSound',String(soundEnabled))}catch(e){}if(soundEnabled)playTone(660,.08)}
+function setSoundEnabled(on){soundEnabled=!!on;try{localStorage.setItem('perceptSound',String(soundEnabled))}catch(e){}if(soundEnabled){playTone(660,.08);if(curStroke)startCrayonSound()}else stopCrayonSound()}
 function playTone(freq=520,duration=.09,type='sine'){
   if(!soundEnabled)return;
   try{const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)return;const ac=new AudioCtx(),osc=ac.createOscillator(),gain=ac.createGain();
@@ -792,6 +792,7 @@ function wordPick(choice,ink){
 
 /* ---------- misc ---------- */
 function resetLocalData(){
+  if(!window.confirm('Are you sure you want to reset your local stats and achievements? This cannot be undone.'))return;
   try{localStorage.removeItem('perceptStats1')}catch(e){}
   renderDashboard();
 }
@@ -813,7 +814,125 @@ const CRAYONS=[
   {n:'Sky',c:'#58b4ff',r:4},{n:'Bubblegum',c:'#ff8fd0',r:-4}
 ];
 const cv=$('draw'), ctx=cv.getContext('2d');
-let strokes=[], curStroke=null, drawOn=false, drawIdx=-1;
+let strokes=[], curStroke=null, drawOn=false, drawIdx=-1, crayonAudio=null, crayonNoise=null, crayonGain=null;
+
+
+let lastSoundX = 0;
+let lastSoundY = 0;
+let lastSoundAt = 0;
+let crayonFilter = null;
+
+function startCrayonSound() {
+  if (!soundEnabled || crayonNoise) return;
+
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+
+    if (!crayonAudio) crayonAudio = new AudioCtx();
+    if (crayonAudio.state === 'suspended') crayonAudio.resume();
+
+    // Fine, irregular noise gives a dry paper-grain texture.
+    const length = crayonAudio.sampleRate;
+    const buffer = crayonAudio.createBuffer(
+      1, length, crayonAudio.sampleRate
+    );
+    const samples = buffer.getChannelData(0);
+
+    for (let i = 0; i < length; i++) {
+      // Slightly soften the noise so it isn't harsh static.
+      samples[i] = (Math.random() * 2 - 1) * 0.7;
+    }
+
+    const source = crayonAudio.createBufferSource();
+    const highpass = crayonAudio.createBiquadFilter();
+    const filter = crayonAudio.createBiquadFilter();
+    const gain = crayonAudio.createGain();
+
+    source.buffer = buffer;
+    source.loop = true;
+
+    highpass.type = 'highpass';
+    highpass.frequency.value = 650;
+
+    filter.type = 'bandpass';
+    filter.frequency.value = 1500;
+    filter.Q.value = 0.8;
+
+    gain.gain.setValueAtTime(0.0001, crayonAudio.currentTime);
+    gain.gain.linearRampToValueAtTime(
+      0.012, crayonAudio.currentTime + 0.04
+    );
+
+    source.connect(highpass);
+    highpass.connect(filter);
+    filter.connect(gain);
+    gain.connect(crayonAudio.destination);
+    source.start();
+
+    crayonNoise = source;
+    crayonGain = gain;
+    crayonFilter = filter;
+  } catch (e) {
+    // Drawing still works if audio is unavailable.
+  }
+}
+
+function updateCrayonSound(e) {
+  if (!soundEnabled || !curStroke) return;
+
+  startCrayonSound();
+  if (!crayonNoise || !crayonAudio || !crayonGain) return;
+
+  const now = performance.now();
+  const x = e.clientX;
+  const y = e.clientY;
+  const elapsed = Math.max(1, now - (lastSoundAt || now));
+  const distance = Math.hypot(
+    x - lastSoundX,
+    y - lastSoundY
+  );
+
+  // Faster movement makes a slightly brighter, stronger scratch.
+  const speed = distance / elapsed;
+  const intensity = Math.min(1, speed / 1.2);
+  const audioNow = crayonAudio.currentTime;
+
+  crayonGain.gain.setTargetAtTime(
+    0.003 + intensity * 0.018,
+    audioNow,
+    0.035
+  );
+
+  if (crayonFilter) {
+    crayonFilter.frequency.setTargetAtTime(
+      1000 + intensity * 1800,
+      audioNow,
+      0.04
+    );
+  }
+
+  lastSoundX = x;
+  lastSoundY = y;
+  lastSoundAt = now;
+}
+
+function stopCrayonSound() {
+  if (!crayonNoise) return;
+
+  try {
+    const now = crayonAudio.currentTime;
+    crayonGain.gain.cancelScheduledValues(now);
+    crayonGain.gain.setTargetAtTime(0.0001, now, 0.025);
+    crayonNoise.stop(now + 0.12);
+  } catch (e) {}
+
+  crayonNoise = null;
+  crayonGain = null;
+  crayonFilter = null;
+  lastSoundAt = 0;
+}
+
 
 function crayonSVG(){
   return '<svg viewBox="0 0 30 150" aria-hidden="true">'
@@ -881,7 +1000,7 @@ function pickCrayon(i){
   sizeCanvas();
 }
 function stopDrawing(){
-  drawOn=false;drawIdx=-1;curStroke=null;
+  drawOn=false;drawIdx=-1;curStroke=null;stopCrayonSound();
   cv.classList.remove('on');
   $('crayons').querySelectorAll('.crayon').forEach(b=>b.setAttribute('aria-pressed','false'));
   $('draw-bar').hidden=true;
@@ -894,14 +1013,16 @@ cv.addEventListener('pointerdown',e=>{
   curStroke={color:CRAYONS[drawIdx].c,pts:[pt]};
   strokes.push(curStroke);
   seg(pt,pt,curStroke.color);
+  startCrayonSound();
 });
 cv.addEventListener('pointermove',e=>{
   if(!curStroke)return;
   const pt=makePt(e),last=curStroke.pts[curStroke.pts.length-1];
   curStroke.pts.push(pt);
   seg(last,pt,curStroke.color);
+  updateCrayonSound(e);
 });
-['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>{curStroke=null}));
+['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>{curStroke=null;stopCrayonSound()}));
 $('undo-btn').addEventListener('click',()=>{strokes.pop();redraw()});
 $('clear-btn').addEventListener('click',()=>{strokes=[];redraw()});
 $('done-btn').addEventListener('click',stopDrawing);
