@@ -221,6 +221,32 @@ label.setting-row{cursor:pointer}
 .games.fresh .game-card{animation:rise .5s backwards;animation-delay:calc(var(--i,0)*70ms)}
 .hero,.section-head,.panel{animation:rise .5s backwards}
  
+/* little piano */
+.piano-wrap{margin:26px 0 8px;text-align:center}
+.piano-toggle{display:inline-flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:10px 20px 10px 14px;color:var(--muted);font-weight:700;box-shadow:var(--shadow);transition:transform .25s cubic-bezier(.3,1.7,.5,1),color .15s,border-color .2s}
+.piano-toggle:hover{color:var(--text);border-color:var(--line-strong)}
+.piano-toggle:active{transform:scale(.95)}
+.mini-keys{display:inline-flex;position:relative;height:22px}
+.mini-keys i{display:block;width:8px;height:22px;background:#fff6e6;border:1px solid #c9b79d;border-top:0;border-radius:0 0 3px 3px}
+.mini-keys b{position:absolute;top:0;width:6px;height:13px;background:#2a170e;border-radius:0 0 2px 2px}
+.piano-panel{margin:0 auto;max-width:900px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);animation:rise .35s backwards}
+.piano-panel[hidden]{display:none}
+.piano-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.piano-head h3{margin:0;font-size:1.15rem}
+.piano-ctl{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.piano-ctl select{background:var(--white);color:var(--text);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font:inherit;font-size:.88rem}
+.piano-ctl label{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--muted);cursor:pointer}
+.piano-ctl input{accent-color:var(--accent)}
+.piano-scroll{overflow-x:auto;padding-bottom:6px;border-radius:12px}
+.piano-keys{position:relative;display:flex;height:180px;min-width:820px;user-select:none;-webkit-user-select:none;touch-action:none;background:#2a170e;padding:6px 6px 0;border-radius:12px}
+.wkey{flex:1;position:relative;border:1px solid #c9b79d;border-top:0;border-radius:0 0 8px 8px;background:linear-gradient(#fff6e6,#f3e2c4);display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;color:#8a6a50;font:700 .7rem var(--sans);cursor:pointer;transition:background .08s}
+.wkey.down{background:linear-gradient(#f0bb5a,#f0955f);color:#2e170a}
+.bkey{position:absolute;top:6px;height:60%;border-radius:0 0 6px 6px;background:linear-gradient(#4f3022,#1d0f08);display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;color:#d9bf9f;font:700 .62rem var(--sans);z-index:2;cursor:pointer;box-shadow:0 3px 4px #0006;transition:background .08s}
+.bkey.down{background:linear-gradient(#d9774a,#a4502a);color:#fff}
+.piano-keys.nolabels .wkey span,.piano-keys.nolabels .bkey span{display:none}
+.piano-hint{margin:10px 0 0;color:var(--muted);font-size:.84rem}
+.piano-hint kbd{font:700 .78rem var(--sans);background:var(--chip);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+ 
 /* crayons */
 .crayons{position:fixed;top:env(safe-area-inset-top,0px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 8px);display:flex;gap:4px;z-index:15;pointer-events:none}
 .crayon{pointer-events:auto;width:30px;height:150px;padding:0;border:0;background:none;color:var(--c);transform:translateY(-86px) rotate(var(--r,0deg));transform-origin:50% 0;transition:transform .22s cubic-bezier(.3,1.5,.5,1);filter:drop-shadow(0 3px 3px #00000066)}
@@ -305,6 +331,27 @@ html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-moti
   <section class="panel" style="padding-top:10px;padding-bottom:10px"><div class="table-scroll" id="personal-bests"></div></section>
  
   <footer>Percept is a free mini-game prototype, made with a warm drink in mind. Scores are for fun and are not scientific measurements of perception or reaction ability.</footer>
+ 
+  <section class="piano-wrap" id="piano-wrap" aria-label="Little piano">
+    <button class="piano-toggle" id="piano-toggle" type="button" aria-expanded="false" aria-controls="piano-panel" onclick="togglePiano(true)">
+      <span class="mini-keys" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><b style="left:6px"></b><b style="left:16px"></b><b style="left:33px"></b></span>
+      <span>A little piano — tap to play</span>
+    </button>
+    <div class="piano-panel" id="piano-panel" hidden>
+      <div class="piano-head">
+        <h3>🎹 Little piano</h3>
+        <div class="piano-ctl">
+          <select id="piano-tone" aria-label="Piano sound" onchange="setPianoTone(this.value)">
+            <option value="piano">Soft piano</option><option value="bell">Music box</option><option value="organ">Gentle organ</option>
+          </select>
+          <label><input type="checkbox" id="piano-labels" checked onchange="$('piano-keys').classList.toggle('nolabels',!this.checked)">Show keys</label>
+          <button class="small-btn" type="button" onclick="togglePiano(false)">Close</button>
+        </div>
+      </div>
+      <div class="piano-scroll"><div class="piano-keys" id="piano-keys"></div></div>
+      <p class="piano-hint">Click or drag across the keys, or play with your keyboard: <kbd>Z</kbd>–<kbd>M</kbd> and <kbd>Q</kbd>–<kbd>P</kbd> are the white keys; the number row (<kbd>2</kbd> <kbd>3</kbd> <kbd>5</kbd> <kbd>6</kbd> <kbd>7</kbd> <kbd>9</kbd> <kbd>0</kbd>) and <kbd>S</kbd> <kbd>D</kbd> <kbd>G</kbd> <kbd>H</kbd> <kbd>J</kbd> are the black keys. Hold <kbd>Shift</kbd> with the <kbd>Z</kbd>–<kbd>M</kbd> row to play the extra lower octave.</p>
+    </div>
+  </section>
 </div>
  
 <canvas id="draw" aria-hidden="true"></canvas>
@@ -1218,6 +1265,115 @@ function resetScores(){
   try{localStorage.removeItem('perceptScores2')}catch(e){}
   renderAll();
 }
+/* ---------- little piano (C4 to E6, played by click, drag or keyboard) ---------- */
+const PIANO_KEYS={z:60,s:61,x:62,d:63,c:64,v:65,g:66,b:67,h:68,n:69,j:70,m:71,q:72,'2':73,w:74,'3':75,e:76,r:77,'5':78,t:79,'6':80,y:81,'7':82,u:83,i:84,'9':85,o:86,'0':87,p:88};
+const PIANO_CODES={},PIANO_LABEL={};
+Object.keys(PIANO_KEYS).forEach(k=>{PIANO_CODES[/^[0-9]$/.test(k)?'Digit'+k:'Key'+k.toUpperCase()]=PIANO_KEYS[k];PIANO_LABEL[PIANO_KEYS[k]]=k.toUpperCase();if(PIANO_KEYS[k]<=71)PIANO_LABEL[PIANO_KEYS[k]-12]='⇧'+k.toUpperCase()});
+const heldByCode={};
+const NOTE_NAMES=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+const BLACK_PCS=new Set([1,3,6,8,10]);
+let pianoOpen=false,pianoBuilt=false,pianoCtx=null,pianoOut=null,pianoVoices={},pianoPointers={};
+let pianoTone=lsGet('perceptPianoTone','piano');if(!['piano','bell','organ'].includes(pianoTone))pianoTone='piano';
+function noteName(m){return NOTE_NAMES[m%12]+(Math.floor(m/12)-1)}
+function buildPiano(){
+  const whites=[];for(let m=48;m<=88;m++)if(!BLACK_PCS.has(m%12))whites.push(m);
+  const w=100/whites.length;let html='';
+  whites.forEach(m=>{html+=`<div class="wkey" role="button" data-m="${m}" aria-label="${noteName(m)}"><span>${PIANO_LABEL[m]}</span></div>`});
+  for(let m=48;m<=88;m++)if(BLACK_PCS.has(m%12)){
+    const idx=whites.indexOf(m-1);
+    html+=`<div class="bkey" role="button" data-m="${m}" style="left:calc(6px + (100% - 12px) * ${((idx+1)*w-w*.3)/100});width:calc((100% - 12px) * ${w*.6/100})" aria-label="${noteName(m)}"><span>${PIANO_LABEL[m]}</span></div>`;
+  }
+  $('piano-keys').innerHTML=html;pianoBuilt=true;
+}
+function pianoAudio(){
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+  if(!pianoCtx){
+    pianoCtx=new AC();
+    const lp=pianoCtx.createBiquadFilter(),comp=pianoCtx.createDynamicsCompressor(),out=pianoCtx.createGain();
+    lp.type='lowpass';lp.frequency.value=5200;out.gain.value=.55;
+    lp.connect(comp);comp.connect(out);out.connect(pianoCtx.destination);pianoOut=lp;
+  }
+  if(pianoCtx.state==='suspended')pianoCtx.resume();
+  return pianoCtx;
+}
+function setKeyDown(m,on){const k=$('piano-keys').querySelector('[data-m="'+m+'"]');if(k)k.classList.toggle('down',on)}
+function noteOn(m){
+  if(pianoVoices[m])return;
+  const ac=pianoAudio();if(!ac)return;
+  const f=440*Math.pow(2,(m-69)/12),t=ac.currentTime,g=ac.createGain(),oscs=[],tone=pianoTone,peak=.3;
+  const mk=(type,mult,vol)=>{const o=ac.createOscillator(),og=ac.createGain();o.type=type;o.frequency.value=f*mult;og.gain.value=vol;o.connect(og);og.connect(g);o.start(t);oscs.push(o)};
+  g.gain.setValueAtTime(.0001,t);
+  if(tone==='piano'){
+    mk('triangle',1,1);mk('sine',2,.35);mk('sine',3,.12);
+    g.gain.linearRampToValueAtTime(peak,t+.008);
+    g.gain.exponentialRampToValueAtTime(peak*.2,t+1.3);
+    g.gain.exponentialRampToValueAtTime(.0002,t+7);
+  }else if(tone==='bell'){
+    mk('sine',1,1);mk('sine',2.76,.22);mk('sine',5.4,.07);
+    g.gain.linearRampToValueAtTime(peak,t+.005);
+    g.gain.exponentialRampToValueAtTime(peak*.08,t+2);
+    g.gain.exponentialRampToValueAtTime(.0002,t+5);
+  }else{
+    mk('triangle',1,.8);mk('sine',2,.35);mk('sine',.5,.4);
+    g.gain.linearRampToValueAtTime(peak,t+.025);
+    g.gain.exponentialRampToValueAtTime(peak*.85,t+.2);
+  }
+  g.connect(pianoOut);
+  pianoVoices[m]={g,oscs,tone};
+  setKeyDown(m,true);
+}
+function noteOff(m){
+  const v=pianoVoices[m];if(!v)return;
+  delete pianoVoices[m];setKeyDown(m,false);
+  const t=pianoCtx.currentTime;
+  try{
+    v.g.gain.cancelScheduledValues(t);v.g.gain.setValueAtTime(v.g.gain.value,t);
+    v.g.gain.setTargetAtTime(0,t,v.tone==='organ'?.05:.15);
+    v.oscs.forEach(o=>{try{o.stop(t+1.2)}catch(e){}});
+  }catch(e){}
+  setTimeout(()=>{try{v.g.disconnect()}catch(e){}},1500);
+}
+function releaseAllNotes(){Object.keys(pianoVoices).forEach(m=>noteOff(+m));pianoPointers={};Object.keys(heldByCode).forEach(k=>delete heldByCode[k])}
+function setPianoTone(v){pianoTone=v;lsSet('perceptPianoTone',v)}
+function togglePiano(open){
+  pianoOpen=!!open;
+  $('piano-panel').hidden=!pianoOpen;$('piano-toggle').hidden=pianoOpen;
+  $('piano-toggle').setAttribute('aria-expanded',String(pianoOpen));
+  if(pianoOpen){
+    if(!pianoBuilt)buildPiano();
+    pianoAudio();
+    setTimeout(()=>$('piano-panel').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'end'}),50);
+  }else releaseAllNotes();
+}
+(function initPiano(){
+  $('piano-tone').value=pianoTone;
+  const pk=$('piano-keys');
+  const noteAt=(x,y)=>{const el=document.elementFromPoint(x,y);const k=el&&el.closest?el.closest('#piano-keys [data-m]'):null;return k?+k.dataset.m:null};
+  pk.addEventListener('pointerdown',e=>{
+    const k=e.target.closest('[data-m]');if(!k)return;
+    e.preventDefault();const m=+k.dataset.m;
+    pianoPointers[e.pointerId]=m;noteOn(m);
+  });
+  pk.addEventListener('pointermove',e=>{
+    if(!(e.pointerId in pianoPointers))return;
+    const m=noteAt(e.clientX,e.clientY),old=pianoPointers[e.pointerId];
+    if(m===null||m===old)return;
+    noteOff(old);pianoPointers[e.pointerId]=m;noteOn(m);
+  });
+  const up=e=>{if(!(e.pointerId in pianoPointers))return;noteOff(pianoPointers[e.pointerId]);delete pianoPointers[e.pointerId]};
+  pk.addEventListener('pointerup',up);pk.addEventListener('pointercancel',up);
+  document.addEventListener('keydown',e=>{
+    if(!pianoOpen||e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;
+    if($('overlay').classList.contains('open'))return;
+    const t=e.target;if(t&&(t.tagName==='INPUT'&&t.type!=='checkbox'||t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.isContentEditable))return;
+    let m=PIANO_CODES[e.code];if(m===undefined)return;
+    if(e.shiftKey&&m<=71)m-=12;
+    e.preventDefault();heldByCode[e.code]=m;noteOn(m);
+  });
+  document.addEventListener('keyup',e=>{const m=heldByCode[e.code];if(m!==undefined){delete heldByCode[e.code];noteOff(m)}});
+  window.addEventListener('blur',releaseAllNotes);
+})();
+ 
 /* ---------- crayons ---------- */
 const CRAYONS=[
   {n:'Coral',c:'#ff6b5e',r:-5},{n:'Sunshine',c:'#ffd23f',r:3},{n:'Leaf',c:'#7bd88f',r:-2},
